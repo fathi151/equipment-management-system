@@ -33,3 +33,7 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 
 
+spring.datasource.url=jdbc:mysql://turntable.proxy.rlwy.net:55723/railway?useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=fNVYvqwZgUrpxkmFnNzINwaNxONGwgZD
+
