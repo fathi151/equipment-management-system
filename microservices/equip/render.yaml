@@ -1,6 +1,6 @@
 services:
   - type: web
     name: equip-backend
-    env: java
-    buildCommand: ./equip/mvnw clean package -DskipTests
-    startCommand: java -jar ./equip/target/pi-0.0.1-SNAPSHOT.jar
+    runtime: docker
+    rootDir: microservices/equip
+    plan: free

@@ -2,5 +2,5 @@ services:
   - type: web
     name: equip-backend
     runtime: docker
-    rootDir: equip
+    rootDir: microservices/equip
     plan: free
