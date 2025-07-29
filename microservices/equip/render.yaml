@@ -1,9 +1,6 @@
 services:
   - type: web
-    name: equipment-backend
+    name: equip-backend
     env: java
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/pi-0.0.1-SNAPSHOT.jar
-    plan: free
-    runtime: docker
-    autoDeploy: true
+    buildCommand: ./equip/mvnw clean package -DskipTests
+    startCommand: java -jar ./equip/target/pi-0.0.1-SNAPSHOT.jar
