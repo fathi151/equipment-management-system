@@ -1,0 +1,284 @@
+package tn.esprit.equip.Controller;
+
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tn.esprit.equip.Entity.*;
+import tn.esprit.equip.Repository.AffectationRepo;
+import tn.esprit.equip.Repository.EquipRepo;
+import tn.esprit.equip.Repository.HstoriqueRepo;
+import tn.esprit.equip.Repository.ModelRepo;
+import tn.esprit.equip.Service.IServiceEqui;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+
+import static tn.esprit.equip.Entity.Statut.AFFECTE;
+import static tn.esprit.equip.Entity.Statut.DISPONIBLE;
+
+@AllArgsConstructor
+@RestController
+@RequestMapping("/equi")
+@CrossOrigin(origins = "http://localhost:4200")
+
+public class Rest {
+
+
+    IServiceEqui serviceimpl;
+    EquipRepo equipRepo;
+    AffectationRepo affectationRepo;
+    HstoriqueRepo historiqueRepo;
+    ModelRepo modelRepo;
+
+
+    @PostMapping("/addType")
+    public TypeEqui AddTypeEqui(@RequestBody TypeEqui typeEqui) {
+        return serviceimpl.AddTypeEqui(typeEqui);
+    }
+
+    @PostMapping("/addMarque")
+    public Marque AddMarque(@RequestBody Marque marque) {
+        return serviceimpl.AddMarque(marque);
+    }
+
+    @PostMapping("/images")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            Path path = Paths.get("file:C:/Users/Lenovo/Desktop/Equipements/microservices/equip/src/main/resources/static/images/" + file.getOriginalFilename());
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
+        }
+    }
+
+
+    @GetMapping("/getTypes")
+    public List<TypeEqui> getAllTypeEqui() {
+        return serviceimpl.getAllTypeEqui();
+    }
+
+    @GetMapping("/getall")
+    public List<TypeEqui> getAllTypes() {
+        return serviceimpl.getAllTypes();
+    }
+
+    @GetMapping("/getallMarque")
+    public List<Marque> getAllMarque() {
+        return serviceimpl.getAllMarque();
+    }
+
+    @DeleteMapping("/deleteType/{id}")
+    public void delete(@PathVariable("id") int id) {
+        serviceimpl.delete(id);
+    }
+
+    @PutMapping("/updateType")
+    public TypeEqui updateTypee(@RequestBody TypeEqui typeEqui) {
+        // Fetch the existing terrain by ID
+        return serviceimpl.updateTypee(typeEqui);
+    }
+
+    @DeleteMapping("/deleteMarque/{id}")
+    public void deleteM(@PathVariable("id") int id) {
+        serviceimpl.deleteM(id);
+    }
+
+    @PutMapping("/updateMarque")
+    public Marque updateMarque(@RequestBody Marque marque) {
+        return serviceimpl.updateMarque(marque);
+    }
+
+    @PostMapping("/addModel")
+    public Model AddModel(@RequestBody Model model) {
+        return serviceimpl.AddModal(model);
+    }
+
+
+    @GetMapping("/getModels")
+    public List<Model> getAllModels() {
+        return serviceimpl.getAllModel();
+
+    }
+@DeleteMapping("/deleteModel/{id}")
+    public void deleteMod(@PathVariable("id") int id) {
+        serviceimpl.deleteMod(id);
+    }
+
+    @PutMapping("/updateModel")
+    public Model updateModel(@RequestBody Model model) {
+        return serviceimpl.updateModel(model);
+    }
+    @PostMapping("/addEqui")
+    public Equipement AddEquipement(@RequestBody Equipement equi) {
+        return serviceimpl.AddEquipement(equi);
+    }
+    @GetMapping("/getallEqui")
+    public Page<Equipement> getAllEquipements(
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+       return serviceimpl.findAll(pageable);
+    }
+
+    @GetMapping("/searchedEqui")
+    Page<Equipement> findEquipByMultiple(@RequestParam String keyword, @RequestParam int page, @RequestParam int size) {
+        Pageable pageable=PageRequest.of(page,size);
+        return serviceimpl.findEquipByMultiple(keyword,pageable);
+    }
+
+
+    public void deleteEqu(int id) {
+        // Chercher l'équipement
+        Equipement equip = equipRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Equipement non trouvé"));
+
+
+        boolean isAffecte = affectationRepo.findByEquipementIdEqui(id) != null;
+        if (isAffecte) {
+            throw new RuntimeException("Suppression interdite : équipement affecté");
+        }
+        equipRepo.delete(equip);
+    }
+
+    @PutMapping("/updateEqui")
+    public Equipement updateEqui(@RequestBody Equipement equipement) {
+        return serviceimpl.updateEqu(equipement);
+    }
+
+
+    @DeleteMapping("/deleteFournisseur/{id}")
+    public void deleteFournisseur(@PathVariable("id") int id) {
+        serviceimpl.deleteFournisseur(id);
+    }
+
+    @PutMapping("/updateFournisseur")
+    public Fournisseur updateFournisseur(@RequestBody Fournisseur fournisseur) {
+    return  serviceimpl.updateFournisseur(fournisseur);
+    }
+
+    @PostMapping("/addFournisseur")
+    public Fournisseur AddFournisseur(@RequestBody Fournisseur fournisseur) {
+return  serviceimpl.AddFournisseur(fournisseur);
+    }
+
+    @GetMapping("/getallFournisseur")
+
+    public List<Fournisseur> getAllFournisseur() {
+return serviceimpl.getAllFournisseur();
+    }
+
+
+    @PostMapping("/affToEqui")
+    public AffectationEquipement AddAffectation(@RequestBody  AffectationEquipement affectationEquipement) {
+        return serviceimpl.AddAffectation(affectationEquipement);
+    }
+    @GetMapping("/getallAffectation")
+    public List<AffectationEquipement> getAllAffectation() {
+        return serviceimpl.getAllAffectation();
+    }
+
+    @DeleteMapping("/deleteAffectation/{id}")
+    public void deleteAffectation(@PathVariable("id") Long id) {
+        serviceimpl.deleteAffectationEqui(id);
+    }
+    @PutMapping("/updateAffectation")
+    public AffectationEquipement updateAffectation(@RequestBody AffectationEquipement affectationEquipement) {
+        return serviceimpl.updateAffectation(affectationEquipement);
+    }
+
+    @PutMapping("/updateCommentaire/{id}")
+    public void changeEtat(@RequestBody  String commentaire, @PathVariable("id") Long id) {
+        serviceimpl.chnageEtat(commentaire, id);
+    }
+    @GetMapping("/findedUsers")
+    List<User>findUsers(@RequestParam("q") String Search)
+    {
+     return    serviceimpl.findUsers(Search);
+
+    }
+
+    @PostMapping("/addAff")
+    public Affectation AddAffectation(@RequestBody Affectation affectation) {
+        return serviceimpl.AddAffectation(affectation);
+    }
+
+
+    @GetMapping("/getEquip/{id}")
+    public Equipement getEquip(@PathVariable("id") int id) {
+        return serviceimpl.findEquiById(id);
+    }
+
+
+    @PutMapping("/statutAffecte/{id}")
+    public void statutAffecte(@PathVariable("id") Integer id) {
+        Equipement equipement = serviceimpl.findEquiById(id);
+        equipement.setStatut(AFFECTE);
+        equipRepo.save(equipement);
+    }
+    @PutMapping("/statutDisponible/{id}")
+    public void statutDisponible(@PathVariable("id") Integer id) {
+        Equipement equipement = serviceimpl.findEquiById(id);
+        equipement.setStatut(DISPONIBLE);
+        equipRepo.save(equipement);
+    }
+@PutMapping("/updateAffect")
+    public Affectation updateAffectation(@RequestBody Affectation affectation) {
+  Affectation existingAffectation = affectationRepo.findById((long) affectation.getId()).orElse(null);
+
+  existingAffectation.setDateAffectation(affectation.getDateAffectation());
+  existingAffectation.setCommentaire(affectation.getCommentaire());
+  existingAffectation.setUser(affectation.getUser());
+  existingAffectation.setEquipement(affectation.getEquipement());
+
+  return affectationRepo.save(existingAffectation);
+
+    }
+
+
+    @GetMapping("/getAff/{id}")
+    public Affectation getAff(@PathVariable("id") int id) {
+        return affectationRepo.findByEquipementIdEqui(id);
+    }
+
+
+    @DeleteMapping("/deleteAffect/{id}")
+    public void deleteAffectation(@PathVariable("id") int id) {
+        Affectation aff= affectationRepo.findByEquipementIdEqui(id);
+        affectationRepo.delete(aff);
+    }
+
+    @GetMapping("/getallAff")
+    public Page<Affectation> getAllAff(@RequestParam int page,@RequestParam int size) {
+            Pageable pageable = PageRequest.of(page, size);
+            return affectationRepo.findAll(pageable);
+
+    }
+    @PostMapping("/addHistorique")
+    public Historique AddHistorique(@RequestBody Historique historique) {
+        return historiqueRepo.save(historique);
+    }
+
+    @GetMapping("/getMode")
+    public List<Model> getAllom(@RequestParam("q") String Search) {
+        return modelRepo.findModelByNomModel(Search);
+    }
+
+    @GetMapping("/allHistorique")
+    public Page<Historique> getAllHistorique(@RequestParam int page,@RequestParam int size) {
+        return historiqueRepo.findAll(PageRequest.of(page, size));
+
+    }
+
+
+}

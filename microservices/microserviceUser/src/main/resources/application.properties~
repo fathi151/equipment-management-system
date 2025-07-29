@@ -1,5 +1,5 @@
 spring.application.name=microserviceUser
-spring.datasource.url=jdbc:mysql://localhost:3306/ProjetUser?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+spring.datasource.url=jdbc:mysql://localhost:3306/ProjetPI?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
 
 spring.datasource.username=root
 
